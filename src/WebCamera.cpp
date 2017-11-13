@@ -137,7 +137,7 @@ RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
     RTC_ERROR(("Unable to open selected video device ID:[%d].", m_camera_id));
     return RTC::RTC_ERROR;
   }
-
+  Sleep(1000);
   cam_cap.set(CV_CAP_PROP_FRAME_WIDTH, m_frame_width);
   cam_cap.set(CV_CAP_PROP_FRAME_HEIGHT, m_frame_height);	
   //Get and show the camera device properties
