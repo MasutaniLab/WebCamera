@@ -1,4 +1,4 @@
-set(comp_srcs WebCamera.cpp ImgSVC_impl.cpp )
+set(comp_srcs WebCamera.cpp CameraCommonInterfaceSVC_impl.cpp )
 set(standalone_srcs WebCameraComp.cpp)
 
 find_package(OpenCV REQUIRED)
@@ -18,6 +18,14 @@ if (DEFINED OPENRTM_LIBRARY_DIRS)
 endif (DEFINED OPENRTM_LIBRARY_DIRS)
 
 if (DEFINED OPENRTM_LIBRARIES)
+  if (MSVC)
+    if ("${CMAKE_GENERATOR}" MATCHES "Win64")
+      set(RTMCAMERA_LIBRARIES optimized;rtmCamera112_$ENV{RTM_VC_VERSION}_x64;debug;rtmCamera112_$ENV{RTM_VC_VERSION}_x64d)
+    else("${CMAKE_GENERATOR}" MATCHES "Win64")
+      set(RTMCAMERA_LIBRARIES optimized;rtmCamera112_$ENV{RTM_VC_VERSION}_x86;debug;rtmCamera112_$ENV{RTM_VC_VERSION}_x86d)
+    endif("${CMAKE_GENERATOR}" MATCHES "Win64")
+	set(OPENRTM_LIBRARIES "${OPENRTM_LIBRARIES};${RTMCAMERA_LIBRARIES}")
+  endif (MSVC)
   string(REGEX REPLACE "-l" ";"
     OPENRTM_LIBRARIES "${OPENRTM_LIBRARIES}")
   string(REGEX REPLACE " ;" ";"
@@ -30,8 +38,6 @@ include_directories(${PROJECT_BINARY_DIR})
 include_directories(${PROJECT_BINARY_DIR}/idl)
 include_directories(${OPENRTM_INCLUDE_DIRS})
 include_directories(${OMNIORB_INCLUDE_DIRS})
-include_directories(${OPENCV_INCLUDE_DIRS})
-
 add_definitions(${OPENRTM_CFLAGS})
 add_definitions(${OMNIORB_CFLAGS})
 
@@ -39,18 +45,20 @@ MAP_ADD_STR(comp_hdrs "../" comp_headers)
 
 link_directories(${OPENRTM_LIBRARY_DIRS})
 link_directories(${OMNIORB_LIBRARY_DIRS})
-link_directories(${OPENCV_LIBRARY_DIRS})
 
 add_library(${PROJECT_NAME} ${LIB_TYPE} ${comp_srcs}
   ${comp_headers} ${ALL_IDL_SRCS})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
 set_source_files_properties(${ALL_IDL_SRCS} PROPERTIES GENERATED 1)
+if(NOT TARGET ALL_IDL_TGT)
+  add_custom_target(ALL_IDL_TGT)
+endif(NOT TARGET ALL_IDL_TGT)
 add_dependencies(${PROJECT_NAME} ALL_IDL_TGT)
 target_link_libraries(${PROJECT_NAME} ${OPENRTM_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_executable(${PROJECT_NAME}Comp ${standalone_srcs}
   ${comp_srcs} ${comp_headers} ${ALL_IDL_SRCS})
-target_link_libraries(${PROJECT_NAME}Comp ${OPENRTM_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME}Comp ${OPENRTM_LIBRARIES} ${OpenCV_LIBRARIES})
 
 install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}Comp
     EXPORT ${PROJECT_NAME}

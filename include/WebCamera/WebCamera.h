@@ -10,18 +10,13 @@
 #ifndef WEBCAMERA_H
 #define WEBCAMERA_H
 
-#include <rtm/Manager.h>
-#include <rtm/DataFlowComponentBase.h>
-#include <rtm/CorbaPort.h>
-#include <rtm/DataInPort.h>
-#include <rtm/DataOutPort.h>
 #include <rtm/idl/BasicDataTypeSkel.h>
 #include <rtm/idl/ExtendedDataTypesSkel.h>
 #include <rtm/idl/InterfaceDataTypesSkel.h>
 
 // Service implementation headers
 // <rtc-template block="service_impl_h">
-#include "ImgSVC_impl.h"
+#include "CameraCommonInterfaceSVC_impl.h"
 
 // </rtc-template>
 
@@ -30,11 +25,21 @@
 
 // </rtc-template>
 
+// Service Consumer stub headers
+// <rtc-template block="port_stub_h">
+using namespace Img;
+// </rtc-template>
+
+#include <rtm/Manager.h>
+#include <rtm/DataFlowComponentBase.h>
+#include <rtm/CorbaPort.h>
+#include <rtm/DataInPort.h>
+#include <rtm/DataOutPort.h>
+
 //Include file for OpenCV functions
 #include<opencv2/opencv.hpp>
 
 using namespace RTC;
-using namespace Img;
 
 //Structure definition for common camera interface
 typedef struct CameraParam_ 
@@ -43,8 +48,7 @@ typedef struct CameraParam_
 	cv::Mat		cameraMatrix;
 	cv::Mat		distCoeffs;
 	cv::Mat		map1, map2;
-}CameraParam;
-
+} CameraParam;
 
 /*!
  * @class WebCamera
@@ -265,7 +269,7 @@ class WebCamera
   /*!
    * 
    * - Name:  cap_continuous_flag
-   * - DefaultValue: false
+   * - DefaultValue: true
    */
   std::string m_cap_continuous_flag;
   /*!
@@ -275,20 +279,19 @@ class WebCamera
    * - DefaultValue: 75
    */
   int m_compression_ratio;
-
   /*!
    * This parameter is the default width of captured image
    * - Name:  frame_width
    * - DefaultValue: 640
    */
   int m_frame_width;
-  
   /*!
    * This parameter is the default height of captured image
    * - Name:  frame_height
-   * - DefaultValue: 640
+   * - DefaultValue: 480
    */
   int m_frame_height;
+
   // </rtc-template>
 
   // DataInPort declaration
@@ -318,7 +321,7 @@ class WebCamera
   // <rtc-template block="service_declare">
   /*!
    */
-  CameraCaptureServiceSVC_impl m_CameraCaptureService;
+  Img_CameraCaptureServiceSVC_impl m_CameraCaptureService;
   
   // </rtc-template>
 

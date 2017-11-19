@@ -1,4 +1,4 @@
-set(idls ${CMAKE_CURRENT_SOURCE_DIR}/Img.idl ${CMAKE_CURRENT_SOURCE_DIR}/BasicDataType.idl )
+set(idls ${CMAKE_CURRENT_SOURCE_DIR}/CameraCommonInterface.idl ${CMAKE_CURRENT_SOURCE_DIR}/BasicDataType.idl )
 
 install(FILES ${idls} DESTINATION ${INC_INSTALL_DIR}/idl
     COMPONENT idl)

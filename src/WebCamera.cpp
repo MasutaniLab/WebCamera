@@ -1,71 +1,85 @@
 // -*- C++ -*-
 /*!
-* @file  WebCamera.cpp
-* @brief Web Camera RTC with common camera interface version 2.0
-* @date $Date$
-*
-* $Id$
-*/
+ * @file  WebCamera.cpp
+ * @brief Web Camera RTC with common camera interface version 2.0
+ * @date $Date$
+ *
+ * $Id$
+ */
 
 #include "WebCamera.h"
+using namespace std;
 
 // Module specification
 // <rtc-template block="module_spec">
 static const char* webcamera_spec[] =
-{
-  "implementation_id", "WebCamera",
-  "type_name",         "WebCamera",
-  "description",       "Web Camera RTC with common camera interface version 2.0",
-  "version",           "2.0.0",
-  "vendor",            "Kenichi Ohara, Meijo University",
-  "category",          "ImageProcessing",
-  "activity_type",     "PERIODIC",
-  "kind",              "DataFlowComponent",
-  "max_instance",      "1",
-  "language",          "C++",
-  "lang_type",         "compile",
-  // Configuration variables
-  "conf.default.camera_id", "0",
-  "conf.default.output_color_format", "RGB",
-  "conf.default.camera_param_filename", "NULL",
-  "conf.default.undistortion_flag", "false",
-  "conf.default.cap_continuous_flag", "true",
-  "conf.default.compression_ratio", "75",
-  "conf.default.frame_width", "640",
-  "conf.default.frame_height", "480",
-  // Widget
-  "conf.__widget__.camera_id", "text",
-  "conf.__widget__.output_color_format", "radio",
-  "conf.__widget__.camera_param_filename", "text",
-  "conf.__widget__.undistortion_flag", "radio",
-  "conf.__widget__.cap_continuous_flag", "radio",
-  "conf.__widget__.compression_ratio", "slider.1",
-  // Constraints
-  "conf.__constraints__.output_color_format", "(RGB,GRAY,JPEG,PNG)",
-  "conf.__constraints__.undistortion_flag", "(true,false)",
-  "conf.__constraints__.cap_continuous_flag", "(true,false)",
-  "conf.__constraints__.compression_ratio", "0<=x<=100",
-  ""
-};
+  {
+    "implementation_id", "WebCamera",
+    "type_name",         "WebCamera",
+    "description",       "Web Camera RTC with common camera interface version 2.0",
+    "version",           "2.0.1",
+    "vendor",            "MasutaniLab",
+    "category",          "ImageProcessing",
+    "activity_type",     "PERIODIC",
+    "kind",              "DataFlowComponent",
+    "max_instance",      "1",
+    "language",          "C++",
+    "lang_type",         "compile",
+    // Configuration variables
+    "conf.default.camera_id", "0",
+    "conf.default.output_color_format", "RGB",
+    "conf.default.camera_param_filename", "NONE",
+    "conf.default.undistortion_flag", "false",
+    "conf.default.cap_continuous_flag", "true",
+    "conf.default.compression_ratio", "75",
+    "conf.default.frame_width", "640",
+    "conf.default.frame_height", "480",
+
+    // Widget
+    "conf.__widget__.camera_id", "text",
+    "conf.__widget__.output_color_format", "radio",
+    "conf.__widget__.camera_param_filename", "text",
+    "conf.__widget__.undistortion_flag", "radio",
+    "conf.__widget__.cap_continuous_flag", "radio",
+    "conf.__widget__.compression_ratio", "slider.1",
+    "conf.__widget__.frame_width", "text",
+    "conf.__widget__.frame_height", "text",
+    // Constraints
+    "conf.__constraints__.output_color_format", "(RGB,GRAY,JPEG,PNG)",
+    "conf.__constraints__.undistortion_flag", "(true,false)",
+    "conf.__constraints__.cap_continuous_flag", "(true,false)",
+    "conf.__constraints__.compression_ratio", "0<=x<=100",
+
+    "conf.__type__.camera_id", "int",
+    "conf.__type__.output_color_format", "string",
+    "conf.__type__.camera_param_filename", "string",
+    "conf.__type__.undistortion_flag", "string",
+    "conf.__type__.cap_continuous_flag", "string",
+    "conf.__type__.compression_ratio", "int",
+    "conf.__type__.frame_width", "int",
+    "conf.__type__.frame_height", "int",
+
+    ""
+  };
 // </rtc-template>
 
 /*!
-* @brief constructor
-* @param manager Maneger Object
-*/
+ * @brief constructor
+ * @param manager Maneger Object
+ */
 WebCamera::WebCamera(RTC::Manager* manager)
-  // <rtc-template block="initializer">
+    // <rtc-template block="initializer">
   : RTC::DataFlowComponentBase(manager),
-  m_CameraImageOut("CameraImage", m_CameraImage),
-  m_CameraCaptureServicePort("CameraCaptureService")
+    m_CameraImageOut("CameraImage", m_CameraImage),
+    m_CameraCaptureServicePort("CameraCaptureService")
 
-  // </rtc-template>
+    // </rtc-template>
 {
 }
 
 /*!
-* @brief destructor
-*/
+ * @brief destructor
+ */
 WebCamera::~WebCamera()
 {
 }
@@ -74,35 +88,36 @@ WebCamera::~WebCamera()
 
 RTC::ReturnCode_t WebCamera::onInitialize()
 {
+  cout << "WebCamera::onInitialize()" << endl;
   // Registration: InPort/OutPort/Service
   // <rtc-template block="registration">
   // Set InPort buffers
-
+  
   // Set OutPort buffer
   addOutPort("CameraImage", m_CameraImageOut);
-
+  
   // Set service provider to Ports
   m_CameraCaptureServicePort.registerProvider("CameraCaptureService", "Img::CameraCaptureService", m_CameraCaptureService);
-
+  
   // Set service consumers to Ports
-
+  
   // Set CORBA Service Ports
   addPort(m_CameraCaptureServicePort);
-
+  
   // </rtc-template>
 
   // <rtc-template block="bind_config">
   // Bind variables and configuration variable
   bindParameter("camera_id", m_camera_id, "0");
   bindParameter("output_color_format", m_output_color_format, "RGB");
-  bindParameter("camera_param_filename", m_camera_param_filename, "..\\..\\camera.yml");
+  bindParameter("camera_param_filename", m_camera_param_filename, "NONE");
   bindParameter("undistortion_flag", m_undistortion_flag, "false");
-  bindParameter("cap_continuous_flag", m_cap_continuous_flag, "false");
+  bindParameter("cap_continuous_flag", m_cap_continuous_flag, "true");
   bindParameter("compression_ratio", m_compression_ratio, "75");
   bindParameter("frame_width", m_frame_width, "640");
   bindParameter("frame_height", m_frame_height, "480");
   // </rtc-template>
-
+  
   isFileLoad = false;
   return RTC::RTC_OK;
 }
@@ -110,27 +125,28 @@ RTC::ReturnCode_t WebCamera::onInitialize()
 /*
 RTC::ReturnCode_t WebCamera::onFinalize()
 {
-return RTC::RTC_OK;
+  return RTC::RTC_OK;
 }
 */
 
 /*
 RTC::ReturnCode_t WebCamera::onStartup(RTC::UniqueId ec_id)
 {
-return RTC::RTC_OK;
+  return RTC::RTC_OK;
 }
 */
 
 /*
 RTC::ReturnCode_t WebCamera::onShutdown(RTC::UniqueId ec_id)
 {
-return RTC::RTC_OK;
+  return RTC::RTC_OK;
 }
 */
 
 
 RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
 {
+  cout << "WebCamera::onActivated()" << endl;
   //Open camera device
   if(!cam_cap.open(m_camera_id))
   {
@@ -248,6 +264,7 @@ RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t WebCamera::onDeactivated(RTC::UniqueId ec_id)
 {
+  cout << "WebCamera::onDeactivated()" << endl;
   std::cout<<"Capture stop!!" <<std::endl;
 
   //Release the device handler and allocated image buffer
@@ -412,34 +429,35 @@ RTC::ReturnCode_t WebCamera::onExecute(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t WebCamera::onAborting(RTC::UniqueId ec_id)
 {
+  cout << "WebCamera::onAborting()" << endl;
   return RTC::RTC_OK;
 }
 
 /*
 RTC::ReturnCode_t WebCamera::onError(RTC::UniqueId ec_id)
 {
-return RTC::RTC_OK;
+  return RTC::RTC_OK;
 }
 */
 
 /*
 RTC::ReturnCode_t WebCamera::onReset(RTC::UniqueId ec_id)
 {
-return RTC::RTC_OK;
+  return RTC::RTC_OK;
 }
 */
 
 /*
 RTC::ReturnCode_t WebCamera::onStateUpdate(RTC::UniqueId ec_id)
 {
-return RTC::RTC_OK;
+  return RTC::RTC_OK;
 }
 */
 
 /*
 RTC::ReturnCode_t WebCamera::onRateChanged(RTC::UniqueId ec_id)
 {
-return RTC::RTC_OK;
+  return RTC::RTC_OK;
 }
 */
 
@@ -447,15 +465,15 @@ return RTC::RTC_OK;
 
 extern "C"
 {
-
+ 
   void WebCameraInit(RTC::Manager* manager)
   {
     coil::Properties profile(webcamera_spec);
     manager->registerFactory(profile,
-      RTC::Create<WebCamera>,
-      RTC::Delete<WebCamera>);
+                             RTC::Create<WebCamera>,
+                             RTC::Delete<WebCamera>);
   }
-
+  
 };
 
 

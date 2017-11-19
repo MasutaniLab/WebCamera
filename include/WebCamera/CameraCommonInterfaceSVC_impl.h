@@ -1,22 +1,22 @@
 // -*-C++-*-
 /*!
- * @file  ImgSVC_impl.h
- * @brief Service implementation header of Img.idl
+ * @file  CameraCommonInterfaceSVC_impl.h
+ * @brief Service implementation header of CameraCommonInterface.idl
  *
  */
 
 #include "BasicDataTypeSkel.h"
 
-#include "ImgSkel.h"
+#include "CameraCommonInterfaceSkel.h"
 
-#ifndef IMGSVC_IMPL_H
-#define IMGSVC_IMPL_H
+#ifndef CAMERACOMMONINTERFACESVC_IMPL_H
+#define CAMERACOMMONINTERFACESVC_IMPL_H
  
 /*!
  * @class CameraCaptureServiceSVC_impl
  * Example class implementing IDL interface Img::CameraCaptureService
  */
-class CameraCaptureServiceSVC_impl
+class Img_CameraCaptureServiceSVC_impl
  : public virtual POA_Img::CameraCaptureService,
    public virtual PortableServer::RefCountServantBase
 {
@@ -29,15 +29,15 @@ class CameraCaptureServiceSVC_impl
   /*!
    * @brief standard constructor
    */
-   CameraCaptureServiceSVC_impl();
+   Img_CameraCaptureServiceSVC_impl();
   /*!
    * @brief destructor
    */
-   virtual ~CameraCaptureServiceSVC_impl();
+   virtual ~Img_CameraCaptureServiceSVC_impl();
 
    // attributes and operations
    void take_one_frame();
-   void take_multi_frames(CORBA::Long num);
+   void take_multi_frames(::CORBA::Long num);
    void start_continuous();
    void stop_continuous();
    void getProfile(Img::CameraDeviceProfile_out profile);
@@ -49,6 +49,6 @@ class CameraCaptureServiceSVC_impl
 
 
 
-#endif // IMGSVC_IMPL_H
+#endif // CAMERACOMMONINTERFACESVC_IMPL_H
 
 

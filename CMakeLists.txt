@@ -1,14 +1,17 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+if(POLICY CMP0048)
+  cmake_policy(SET CMP0048 OLD)
+endif()
 
 project(WebCamera)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 include("${PROJECT_SOURCE_DIR}/cmake/utils.cmake")
-set(PROJECT_VERSION 2.0.0 CACHE STRING "WebCamera version")
+set(PROJECT_VERSION 2.0.1 CACHE STRING "WebCamera version")
 DISSECT_VERSION()
 set(PROJECT_DESCRIPTION "Web Camera RTC with common camera interface version 2.0")
-set(PROJECT_VENDOR "Kenichi Ohara, Meijo University")
-set(PROJECT_AUTHOR "Kenichi Ohara, Meijo University")
-set(PROJECT_AUTHOR_SHORT "Kenichi Ohara, Meijo University")
+set(PROJECT_VENDOR "MasutaniLab")
+set(PROJECT_AUTHOR "MasutaniLab")
+set(PROJECT_AUTHOR_SHORT "MasutaniLab")
 
 # Add an "uninstall" target
 CONFIGURE_FILE ("${PROJECT_SOURCE_DIR}/cmake/uninstall_target.cmake.in"
@@ -45,7 +48,7 @@ set(SHARE_INSTALL_DIR
     "components/share/${PROJECT_NAME_LOWER}-${PROJECT_VERSION_MAJOR}")
 
 # Get necessary dependency information
-find_package(OpenRTM)
+find_package(OpenRTM HINTS /usr/lib64/openrtm-1.1/cmake)
 if(${OpenRTM_FOUND})
   MESSAGE(STATUS "OpenRTM configuration Found")
 else(${OpenRTM_FOUND})
