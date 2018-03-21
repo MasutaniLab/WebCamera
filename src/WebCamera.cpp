@@ -8,6 +8,7 @@
  */
 
 #include "WebCamera.h"
+#include <sstream>
 using namespace std;
 
 // Module specification
@@ -88,7 +89,7 @@ WebCamera::~WebCamera()
 
 RTC::ReturnCode_t WebCamera::onInitialize()
 {
-  cout << "WebCamera::onInitialize()" << endl;
+  RTC_INFO(("onInitialize()"));
   // Registration: InPort/OutPort/Service
   // <rtc-template block="registration">
   // Set InPort buffers
@@ -146,7 +147,7 @@ RTC::ReturnCode_t WebCamera::onShutdown(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
 {
-  cout << "WebCamera::onActivated()" << endl;
+  RTC_INFO(("onActivated()"));
   //Open camera device
   if(!cam_cap.open(m_camera_id))
   {
@@ -162,9 +163,9 @@ RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
   height = src_image.rows;
   depth = src_image.depth();
 
-  std::cout << "Image size:" << width << " x " << height << std::endl;
-  std::cout << "Depth     :" << depth << std::endl;
-  std::cout << "Channles  :" << src_image.channels() << std::endl;
+  RTC_INFO(("Image size: %d x %d", width, height));
+  RTC_INFO(("Depth     : %d", depth));
+  RTC_INFO(("Channles  : %d", src_image.channels()));
 
   //Check channels of camera device
   nchannels = (m_output_color_format == "GRAY") ? 1 : 3;
@@ -173,28 +174,27 @@ RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
   {
     if(m_output_color_format == "RGB" || m_output_color_format == "JPEG" || m_output_color_format == "PNG")
     {
-      std::cout << "Convert GRAY image to RGB color image" <<std::endl;
+      RTC_INFO(("Convert GRAY image to RGB color image"));
     }
   }
   else if( nchannels < src_image.channels() )
   {
-    std::cout<< "Convert RGB color image to GRAY image" <<std::endl;
+    RTC_INFO(("Convert RGB color image to GRAY image"));
   }
   else
   {
-    if(m_output_color_format == "RGB" || m_output_color_format == "JPEG" || m_output_color_format == "PNG")
+    if (m_output_color_format == "RGB" || m_output_color_format == "JPEG" || m_output_color_format == "PNG")
     {
-      std::cout << "Convert BGR color image to RGB color image" << std::endl;			
-    }
-    else if(m_output_color_format == "GRAY")
+      RTC_INFO(("Convert BGR color image to RGB color image"));
+    } else if (m_output_color_format == "GRAY")
     {
-      std::cout << "Gray image" <<std::endl;
+      RTC_INFO(("Gray image"));
     }
   }
 
   //Load camera parameter
   //If camera parameter file could not be found, whole camera parameters are set to zero.
-  std::cout<<"Loading camera parameter file: "<< m_camera_param_filename << std::endl;
+  RTC_INFO(("Loading camera parameter file: %s", m_camera_param_filename.c_str()));
 
   cv::FileStorage fs(m_camera_param_filename, cv::FileStorage::READ);
   if(fs.isOpened())
@@ -205,13 +205,18 @@ RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
     fs["camera_matrix"] >> cam_param.cameraMatrix;
     fs["distortion_coefficients"] >> cam_param.distCoeffs;
 
-    std::cout << "=================================================" << std::endl;
-    std::cout << "Camera Parameter" <<std::endl;
-    std::cout << "=================================================" << std::endl;
+    RTC_INFO(("================================================="));
+    RTC_INFO(("Camera Parameter"));
+    RTC_INFO(("================================================="));
 
-    std::cout << "Image size: " << cam_param.imageSize.width << "x" << cam_param.imageSize.height << std::endl;
-    std::cout << "Camera Matrix: "<< cam_param.cameraMatrix << std::endl;
-    std::cout << "Distortion coefficients: " << cam_param.distCoeffs << std::endl;
+    RTC_INFO(("Image size: %d x %d", cam_param.imageSize.width, cam_param.imageSize.height));
+    ostringstream ss;
+    ss << "Camera Matrix: " << cam_param.cameraMatrix;
+    RTC_INFO((ss.str().c_str()));
+    ss.str("");
+    ss.clear(stringstream::goodbit);
+    ss << "Distortion coefficients: " << cam_param.distCoeffs;
+    RTC_INFO((ss.str().c_str()));
 
     //Set distortion coefficient to make rectify map
     CameraParam *param;
@@ -223,10 +228,8 @@ RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
   }
   else
   {
-    RTC_ERROR(( "Unable to open selected camera parameter file: %s", m_camera_param_filename.c_str() ));
-    RTC_ERROR(( "Camera parameters are set to zero" ));
-    std::cout << "Unable to open selected camera parameter file: " << m_camera_param_filename.c_str() << std::endl;
-    std::cout << "This program sets camera parameter as all zero." << std::endl;
+    RTC_WARN(( "Unable to open selected camera parameter file: %s", m_camera_param_filename.c_str() ));
+    RTC_WARN(( "Camera parameters are set to zero" ));
 
     isFileLoad = false;
 
@@ -256,16 +259,16 @@ RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
   //Set default capture mode
   m_CameraCaptureService.m_cap_continuous = coil::toBool(m_cap_continuous_flag, "true", "false");
 
-  std::cout << "Capture mode: " << m_cap_continuous_flag << std::endl;
-  std::cout << "Capture start!!" << std::endl;
+  RTC_INFO(("Capture mode: %s", m_cap_continuous_flag.c_str()));
+  RTC_INFO(("Capture start!!"));
   return RTC::RTC_OK;
 }
 
 
 RTC::ReturnCode_t WebCamera::onDeactivated(RTC::UniqueId ec_id)
 {
-  cout << "WebCamera::onDeactivated()" << endl;
-  std::cout<<"Capture stop!!" <<std::endl;
+  RTC_INFO(("onDeactivated()"));
+  RTC_INFO(("Capture stop!!"));
 
   //Release the device handler and allocated image buffer
   src_image.release();
@@ -392,7 +395,7 @@ RTC::ReturnCode_t WebCamera::onExecute(RTC::UniqueId ec_id)
       compression_param[1] = (int)((double)m_compression_ratio/10.0);
       if(compression_param[1] == 10)
         compression_param[1] = 9;
-      std::cout<<"PNG compression ratio: "<<compression_param[1] << "\r";
+      RTC_INFO(("PNG compression ratio: %d", compression_param[1]));
 
 
       //Encode raw image data to jpeg data
@@ -406,7 +409,7 @@ RTC::ReturnCode_t WebCamera::onExecute(RTC::UniqueId ec_id)
     {
       m_CameraImage.data.image.format = Img::CF_GRAY;
 
-      std::cout<<"Selected image compression mode is not defined. Please confirm correct compression mode!"<<std::endl;
+      RTC_INFO(("Selected image compression mode is not defined. Please confirm correct compression mode!"));
       m_CameraImage.data.image.raw_data.length( width * height * nchannels);
       for( int i(0); i< height; ++i )
         memcpy(&m_CameraImage.data.image.raw_data[ i * width * nchannels], &proc_image.data[ i * proc_image.step ], width * nchannels);			
@@ -419,8 +422,7 @@ RTC::ReturnCode_t WebCamera::onExecute(RTC::UniqueId ec_id)
   }
   else
   {
-    RTC_DEBUG( ("Waiting capture mode command via ServicePort") );
-    std::cout << "Waiting capture mode command via ServicePort" << std::endl;
+    RTC_DEBUG(("Waiting capture mode command via ServicePort"));
     return RTC::RTC_OK;
   }
   return RTC::RTC_OK;
@@ -429,7 +431,7 @@ RTC::ReturnCode_t WebCamera::onExecute(RTC::UniqueId ec_id)
 
 RTC::ReturnCode_t WebCamera::onAborting(RTC::UniqueId ec_id)
 {
-  cout << "WebCamera::onAborting()" << endl;
+  RTC_INFO(("onAborting()"));
   return RTC::RTC_OK;
 }
 
