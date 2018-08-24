@@ -325,7 +325,7 @@ RTC::ReturnCode_t WebCamera::onExecute(RTC::UniqueId ec_id)
     }
     else
     {
-      if( m_output_color_format == "RGB" || m_output_color_format == "JPEG" || m_output_color_format == "PNG")
+      if( m_output_color_format == "RGB" )
         cv::cvtColor(src_image, proc_image, CV_BGR2RGB);
       else
         proc_image = src_image;
