@@ -1,14 +1,14 @@
 ﻿// -*- C++ -*-
 /*!
- * @file  WebCamera.h
+ * @file  WebCameraTest.h
  * @brief Web Camera RTC with common camera interface version 2.0
  * @date  $Date$
  *
  * $Id$
  */
 
-#ifndef WEBCAMERA_H
-#define WEBCAMERA_H
+#ifndef WEBCAMERA_TEST__H
+#define WEBCAMERA_TEST_H
 
 #include <rtm/idl/BasicDataTypeSkel.h>
 #include <rtm/idl/ExtendedDataTypesSkel.h>
@@ -28,8 +28,7 @@
 
 // Service Consumer stub headers
 // <rtc-template block="port_stub_h">
-
-
+using namespace Img;
 // </rtc-template>
 
 #include <rtm/Manager.h>
@@ -38,26 +37,12 @@
 #include <rtm/DataInPort.h>
 #include <rtm/DataOutPort.h>
 
-//Include file for OpenCV functions
-#include<opencv2/opencv.hpp>
-
-using namespace RTC;
-
-//Structure definition for common camera interface
-typedef struct CameraParam_ 
-{
-	cv::Size	imageSize;
-	cv::Mat		cameraMatrix;
-	cv::Mat		distCoeffs;
-	cv::Mat		map1, map2;
-} CameraParam;
-
 /*!
- * @class WebCamera
+ * @class WebCameraTest
  * @brief Web Camera RTC with common camera interface version 2.0
  *
  */
-class WebCamera
+class WebCameraTest
   : public RTC::DataFlowComponentBase
 {
  public:
@@ -65,12 +50,12 @@ class WebCamera
    * @brief constructor
    * @param manager Maneger Object
    */
-  WebCamera(RTC::Manager* manager);
+  WebCameraTest(RTC::Manager* manager);
 
   /*!
    * @brief destructor
    */
-  ~WebCamera();
+  ~WebCameraTest();
 
   // <rtc-template block="public_attribute">
   
@@ -304,16 +289,16 @@ class WebCamera
 
   // DataInPort declaration
   // <rtc-template block="inport_declare">
+  Img::TimedCameraImage m_CameraImage;
+  /*!
+   */
+  RTC::InPort<Img::TimedCameraImage> m_CameraImageIn;
   
   // </rtc-template>
 
 
   // DataOutPort declaration
   // <rtc-template block="outport_declare">
-  Img::TimedCameraImage m_CameraImage;
-  /*!
-   */
-  RTC::OutPort<Img::TimedCameraImage> m_CameraImageOut;
   
   // </rtc-template>
 
@@ -327,14 +312,14 @@ class WebCamera
 
   // Service declaration
   // <rtc-template block="service_declare">
-  /*!
-   */
-  Img_CameraCaptureServiceSVC_impl m_CameraCaptureService;
   
   // </rtc-template>
 
   // Consumer declaration
   // <rtc-template block="consumer_declare">
+  /*!
+   */
+  RTC::CorbaConsumer<Img::CameraCaptureService> m_CameraCaptureService;
   
   // </rtc-template>
 
@@ -346,18 +331,13 @@ class WebCamera
   // <rtc-template block="private_operation">
   
   // </rtc-template>
-  cv::VideoCapture cam_cap;
-  cv::Mat src_image, proc_image;
-  int width, height, depth, nchannels;
-  CameraParam cam_param;
-  bool isFileLoad;
 
 };
 
 
 extern "C"
 {
-  DLL_EXPORT void WebCameraInit(RTC::Manager* manager);
+  DLL_EXPORT void WebCameraTestInit(RTC::Manager* manager);
 };
 
-#endif // WEBCAMERA_H
+#endif // WEBCAMERA_TEST_H

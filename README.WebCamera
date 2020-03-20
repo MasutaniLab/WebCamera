@@ -1,4 +1,4 @@
-======================================================================
+﻿======================================================================
   RTComponent: WebCamera specificatioin
 
   OpenRTM-aist-1.0.0
@@ -22,7 +22,7 @@
 # <rtc-template block="module">
 Module Name: WebCamera
 Description: Web Camera RTC with common camera interface version 2.0
-Version:     2.0.1
+Version:     2.0.2
 Vendor:      MasutaniLab
 Category:    ImageProcessing
 Kind:        DataFlowComponent
@@ -184,6 +184,14 @@ Lang Type:
 		                 captured image
 		Type:            int
 		DefaultValue:     480
+		Unit:            
+		Range:           
+		Constraint:      
+
+		Name:             deviceName
+		Description:     
+		Type:            string
+		DefaultValue:     NONE
 		Unit:            
 		Range:           
 		Constraint:      

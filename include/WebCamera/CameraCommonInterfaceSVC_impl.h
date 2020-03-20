@@ -1,4 +1,4 @@
-// -*-C++-*-
+﻿// -*-C++-*-
 /*!
  * @file  CameraCommonInterfaceSVC_impl.h
  * @brief Service implementation header of CameraCommonInterface.idl
@@ -13,7 +13,7 @@
 #define CAMERACOMMONINTERFACESVC_IMPL_H
  
 /*!
- * @class CameraCaptureServiceSVC_impl
+ * @class Img_CameraCaptureServiceSVC_impl
  * Example class implementing IDL interface Img::CameraCaptureService
  */
 class Img_CameraCaptureServiceSVC_impl
@@ -23,7 +23,7 @@ class Img_CameraCaptureServiceSVC_impl
  private:
    // Make sure all instances are built on the heap by making the
    // destructor non-public
-   //virtual ~CameraCaptureServiceSVC_impl();
+   //virtual ~Img_CameraCaptureServiceSVC_impl();
 
  public:
   /*!

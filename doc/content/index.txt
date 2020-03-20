@@ -1,4 +1,4 @@
-WebCameraName - English
+﻿WebCameraName - English
 ========================
 
 .. toctree::
@@ -114,6 +114,7 @@ cap_continuous_flag string             true
 compression_ratio int                75               This parameter can control the compression ratio for JPEG and PNG color format.
 frame_width      int                640              This parameter is the default width of captured image
 frame_height     int                480              This parameter is the default height of captured image
+deviceName       string             NONE             
 ================ ================== ================ ======
 
 Ports

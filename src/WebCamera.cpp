@@ -1,4 +1,4 @@
-// -*- C++ -*-
+﻿// -*- C++ -*-
 /*!
  * @file  WebCamera.cpp
  * @brief Web Camera RTC with common camera interface version 2.0
@@ -18,7 +18,7 @@ static const char* webcamera_spec[] =
     "implementation_id", "WebCamera",
     "type_name",         "WebCamera",
     "description",       "Web Camera RTC with common camera interface version 2.0",
-    "version",           "2.0.1",
+    "version",           "2.0.2",
     "vendor",            "MasutaniLab",
     "category",          "ImageProcessing",
     "activity_type",     "PERIODIC",
@@ -35,6 +35,7 @@ static const char* webcamera_spec[] =
     "conf.default.compression_ratio", "75",
     "conf.default.frame_width", "640",
     "conf.default.frame_height", "480",
+    "conf.default.deviceName", "NONE",
 
     // Widget
     "conf.__widget__.camera_id", "text",
@@ -45,6 +46,7 @@ static const char* webcamera_spec[] =
     "conf.__widget__.compression_ratio", "slider.1",
     "conf.__widget__.frame_width", "text",
     "conf.__widget__.frame_height", "text",
+    "conf.__widget__.deviceName", "text",
     // Constraints
     "conf.__constraints__.output_color_format", "(RGB,GRAY,JPEG,PNG)",
     "conf.__constraints__.undistortion_flag", "(true,false)",
@@ -59,6 +61,7 @@ static const char* webcamera_spec[] =
     "conf.__type__.compression_ratio", "int",
     "conf.__type__.frame_width", "int",
     "conf.__type__.frame_height", "int",
+    "conf.__type__.deviceName", "string",
 
     ""
   };
@@ -117,6 +120,7 @@ RTC::ReturnCode_t WebCamera::onInitialize()
   bindParameter("compression_ratio", m_compression_ratio, "75");
   bindParameter("frame_width", m_frame_width, "640");
   bindParameter("frame_height", m_frame_height, "480");
+  bindParameter("deviceName", m_deviceName, "NONE");
   // </rtc-template>
   
   isFileLoad = false;
