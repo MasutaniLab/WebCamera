@@ -18,8 +18,17 @@ call ..\ImageViewer\ImageViewer.bat
 set c=/localhost/WebCamera0.rtc
 set v=/localhost/ImageViewer0.rtc
 
-:時間待ち
-timeout 5
+:コンポーネントの起動待ち
+:rtls-c
+echo %c% の起動待ち
+timeout 1 /nobreak > nul
+rtls %c% > nul 2>&1
+if errorlevel 1 goto rtls-c
+:rtls-v
+echo %v% の起動待ち
+timeout 1 /nobreak > nul
+rtls %v% > nul 2>&1
+if errorlevel 1 goto rtls-v
 
 :接続
 rtcon %c%:CameraImage %v%:Image
