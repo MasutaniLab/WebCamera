@@ -352,6 +352,7 @@ class WebCamera
   CameraParam cam_param;
   bool isFileLoad;
 
+  int findVideoDevice(const std::string &name, std::string &fullname);
 };
 
 
