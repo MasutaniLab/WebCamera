@@ -168,7 +168,7 @@ RTC::ReturnCode_t WebCamera::onActivated(RTC::UniqueId ec_id)
   RTC_INFO(("デバイス番号： %d", id));
   if(!cam_cap.open(id))
   {
-    RTC_ERROR(("Unable to open selected video device ID:[%d].", m_camera_id));
+    RTC_ERROR(("Unable to open selected video device ID:[%d].", id));
     return RTC::RTC_ERROR;
   }
   coil::sleep(1);
@@ -489,11 +489,11 @@ int WebCamera::findVideoDevice(const std::string &name, std::string &fullname)
     return -1;
   }
 
-  for (int i = 0; i < deviceNames.size(); i++) {
+  for (size_t i = 0; i < deviceNames.size(); i++) {
     RTC_INFO(("%d: %s", i, deviceNames[i].c_str()));
   }
 
-  for (int i = 0; i < deviceNames.size(); i++) {
+  for (size_t i = 0; i < deviceNames.size(); i++) {
     if (deviceNames[i].find(name) != string::npos) {
       fullname = deviceNames[i];
       return i;
