@@ -1,4 +1,4 @@
-set(comp_srcs WebCamera.cpp CameraCommonInterfaceSVC_impl.cpp )
+set(comp_srcs WebCamera.cpp CameraCommonInterfaceSVC_impl.cpp vdname.cpp vdname.h)
 set(standalone_srcs WebCameraComp.cpp)
 
 find_package(OpenCV REQUIRED)
@@ -49,12 +49,20 @@ if(NOT TARGET ALL_IDL_TGT)
  add_custom_target(ALL_IDL_TGT)
 endif(NOT TARGET ALL_IDL_TGT)
 add_dependencies(${PROJECT_NAME} ALL_IDL_TGT)
-target_link_libraries(${PROJECT_NAME} ${OPENRTM_LIBRARIES} ${OpenCV_LIBRARIES} strmiids.lib)
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} ${OPENRTM_LIBRARIES} ${OpenCV_LIBRARIES} strmiids.lib)
+else()
+    target_link_libraries(${PROJECT_NAME} ${OPENRTM_LIBRARIES} ${OpenCV_LIBRARIES})
+endif()
 
 add_executable(${PROJECT_NAME}Comp ${standalone_srcs}
   ${comp_srcs} ${comp_headers} ${ALL_IDL_SRCS})
 add_dependencies(${PROJECT_NAME}Comp ALL_IDL_TGT)
-target_link_libraries(${PROJECT_NAME}Comp ${OPENRTM_LIBRARIES} ${OpenCV_LIBRARIES} strmiids.lib)
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME}Comp ${OPENRTM_LIBRARIES} ${OpenCV_LIBRARIES} strmiids.lib)
+else()
+    target_link_libraries(${PROJECT_NAME}Comp ${OPENRTM_LIBRARIES} ${OpenCV_LIBRARIES})
+endif()
 
 install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}Comp
     EXPORT ${PROJECT_NAME}
